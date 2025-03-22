@@ -1,0 +1,13 @@
+{
+    "type": "hom",
+    "G": {
+        "numNodes": 4,
+        "edges": ["0 1", "1 2", "1 3", "0 3", "0 2"]
+    },
+    "H": {
+        "numNodes": 4,
+        "edges": ["0 1", "1 2", "1 3", "0 3", "0 2"]
+    },
+    "CFI": true,
+    "CFIInverted": false
+}
