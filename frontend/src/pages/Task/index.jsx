@@ -1,9 +1,13 @@
 import { useParams } from "react-router"
 import TaskList from "./TaskList";
-import { Box, Checkbox, Container, FormControl, FormControlLabel, Grid2 as Grid, InputLabel, MenuItem, Select, Typography } from "@mui/material";
+import { Box, Checkbox, Container, Divider, FilledInput, FormControl, FormControlLabel, Grid2 as Grid, IconButton, Input, InputLabel, MenuItem, Select, TextField, Typography } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { useState } from "react";
 import { updateTask as updateTask_ } from "../../store/tasksSlice";
+import GraphDisplay from "./GraphDisplay";
+import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 
 export default function Task({}) {
 
@@ -13,8 +17,15 @@ export default function Task({}) {
     const task = (useSelector(state => state.tasks.value)).find(e => e.id == taskId);
     console.log(task)
 
+    const [openG, setOpenG] = useState(true);
+    const [openH, setOpenH] = useState(true);
+
+    const status = task?.status ?? "rework";
     const type = task?.type ?? "hom";
     const cfi = task?.cfi ?? false;
+    const G = task?.G;
+    const H = task?.H;
+    let description = "Calculate the number of homs from H to G";
 
     function updateTask(field, value) {
         const newTask = {...task}
@@ -28,28 +39,49 @@ export default function Task({}) {
             <TaskList/>
         </Grid>
         <Grid item size={{xs: 8, sm: 9, lg: 10, xl: 10.5}}>
-            <Box>
-                <Typography variant="h4">Task {taskId}</Typography>
-                <Typography>Status: rework</Typography>
-                <FormControl>
-                    <InputLabel>Type</InputLabel>
-                    <Select
-                        value={type}
-                        onChange={(event) => {updateTask("type",event.target.value)}}
-                        label="Type"
-                    >
-                        <MenuItem value={"hom"}>Homomorphism</MenuItem>
-                        <MenuItem value={"emb"}>Embedding</MenuItem>
-                        <MenuItem value={"mat"}>k-Matching</MenuItem>
-                    </Select>
-                </FormControl>
-                <Typography variant="body1">
-                    CFI: 
+            <Box sx={{display: 'flex', flexDirection: 'column', gap: 2}}>
+                <Typography variant="h4" sx={{margin: "16px 32px", textAlign: "center"}}>Task {taskId}</Typography>
+                <Box sx={{display: 'flex', alignItems: 'center', gap: 1}}>
+                    <Typography>Status:</Typography>
+                    <TextField value={status} sx={{width: '80px'}}/>
+                </Box>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography>Type: </Typography>
+                    <FormControl sx={{width: '200px'}}>
+                        <Select
+                            value={type}
+                            onChange={(event) => {updateTask("type",event.target.value)}}
+                        >
+                            <MenuItem value={"hom"}>Homomorphism</MenuItem>
+                            <MenuItem value={"emb"}>Embedding</MenuItem>
+                            <MenuItem value={"mat"}>k-Matching</MenuItem>
+                        </Select>
+                    </FormControl>
+                    <Typography>Description:</Typography>
+                    <TextField value={description} sx={{width: '500px'}}/>
+                </Box>
+                <Box>
+                    <Box sx={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+                        <Typography>Graph H</Typography>
+                        <IconButton onClick={() => {setOpenH(!openH)}}>{openH ? <KeyboardArrowDownIcon/> : <KeyboardArrowRightIcon/>}</IconButton>
+                    </Box>
+                    <Box sx={{paddingLeft: 2}}>{openH && <GraphDisplay input={H} setInput={(m) => updateTask("H", m)}/>}</Box>
+                </Box>
+                <Box>
+                    <Box sx={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+                        <Typography>Graph G</Typography>
+                        <IconButton onClick={() => {setOpenG(!openG)}}>{openG ? <KeyboardArrowDownIcon/> : <KeyboardArrowRightIcon/>}</IconButton>
+                    </Box>
+                    <Box sx={{paddingLeft: 2}}>{openG && <GraphDisplay input={G} setInput={(m) => updateTask("G", m)}/>}</Box>
+                </Box>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography variant="body1">G is CFI-Graph:</Typography>
                     <FormControlLabel
-                        control={<Checkbox checked={cfi} onChange={() => {updateTask("cfi", !cfi)}} />}
+                        control={<Checkbox checked={cfi} onChange={() => updateTask("cfi", !cfi)} />}
                         label=""
                     />
-                </Typography>
+                </Box>
+                <Typography>Result: pending</Typography>
             </Box>
         </Grid>
     </Grid>
