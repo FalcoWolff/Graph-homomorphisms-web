@@ -8,6 +8,10 @@ export default function GraphDisplay({input, setInput}) {
     let [graphKey, setGraphKey] = useState(uuid())
     const [graphData, setGraphData] = useState({ nodes: [], edges: [] });
 
+    useEffect(() => {
+        handleGraphInput();
+    }, [])
+
     const handleGraphLoad = (network) => {
         // Ensure the graph fits into the container once it's loaded
         network.fit();

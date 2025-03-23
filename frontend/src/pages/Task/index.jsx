@@ -12,9 +12,9 @@ import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 export default function Task({}) {
 
     const params = useParams();
-    const taskId = parseInt(params.taskId)
+    const taskIndex = parseInt(params.taskIndex)
     const dispatch = useDispatch();
-    const task = (useSelector(state => state.tasks.value)).find(e => e.id == taskId);
+    const task = useSelector(state => state.tasks.value[taskIndex])
 
     const [openG, setOpenG] = useState(true);
     const [openH, setOpenH] = useState(true);
@@ -41,7 +41,7 @@ export default function Task({}) {
     function updateTask(field, value) {
         const newTask = {...task}
         newTask[field] = value
-        dispatch(updateTask_({id: taskId, task: newTask}));
+        dispatch(updateTask_({index: taskIndex, task: newTask}));
     }
 
     function onClickRun() {
@@ -56,7 +56,7 @@ export default function Task({}) {
         <Divider orientation="vertical" flexItem={true}/>
         <Grid item size={{xs: 7.5, sm: 8.5, lg: 9.5, xl: 10}}>
             <Box sx={{display: 'flex', flexDirection: 'column', gap: 2}}>
-                <Typography variant="h4" sx={{margin: "16px 32px", textAlign: "center"}}>Task {taskId}</Typography>
+                <Typography variant="h4" sx={{margin: "16px 32px", textAlign: "center"}}>Task {taskIndex}</Typography>
                 <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                     <Chip icon={<PlayArrowIcon/>} label="Start task" color="success" onClick={onClickRun}/>
                 </Box>

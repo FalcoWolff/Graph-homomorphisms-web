@@ -9,7 +9,7 @@ function App() {
       <Router>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/task/:taskId" element={<Task />} />
+          <Route path="/task/:taskIndex" element={<Task />} />
         </Routes>
       </Router>
     </>

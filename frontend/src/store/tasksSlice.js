@@ -8,11 +8,8 @@ export const tasksSlice = createSlice({
             state.value = action.payload
         },
         updateTask: (state, action) => {
-            const { id, task } = action.payload;
-            const index = state.value.findIndex(task => {
-                return task.id === id
-            });
-            if (index !== -1) {
+            const { index, task } = action.payload;
+            if (index < state.value.length) {
                 state.value[index] = { ...state.value[index], ...task };
             }
         },
