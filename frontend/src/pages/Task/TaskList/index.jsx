@@ -26,7 +26,7 @@ export default function TaskList({}) {
         navigate(`/task/${id}`)
     }
 
-    return (<Container sx={{borderRight: "2px solid black", height: '100%'}}>
+    return (<Container sx={{height: '100%'}}>
         <Typography variant="h4" sx={{margin: "16px 32px", textAlign: "center"}}>Tasks</Typography>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             {tasks.map((e) => {

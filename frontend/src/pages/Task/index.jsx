@@ -1,6 +1,6 @@
 import { useParams } from "react-router"
 import TaskList from "./TaskList";
-import { Box, Checkbox, Chip, Container, Divider, FilledInput, FormControl, FormControlLabel, Grid2 as Grid, IconButton, Input, InputLabel, MenuItem, Select, TextField, Typography } from "@mui/material";
+import { Box, Checkbox, Chip, Divider, FormControl, FormControlLabel, FormHelperText, Grid2 as Grid, IconButton, Input, InputLabel, MenuItem, Select, TextField, Typography } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { useState } from "react";
 import { updateTask as updateTask_ } from "../../store/tasksSlice";
@@ -52,34 +52,29 @@ export default function Task({}) {
         <Grid item size={{xs: 4, sm: 3, lg: 2, xl: 1.5}}>
             <TaskList/>
         </Grid>
-        <Grid item size={{xs: 8, sm: 9, lg: 10, xl: 10.5}}>
+        <Divider orientation="vertical" flexItem={true}/>
+        <Grid item size={{xs: 7.5, sm: 8.5, lg: 9.5, xl: 10}}>
             <Box sx={{display: 'flex', flexDirection: 'column', gap: 2}}>
                 <Typography variant="h4" sx={{margin: "16px 32px", textAlign: "center"}}>Task {taskId}</Typography>
                 <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                     <Chip icon={<PlayArrowIcon/>} label="Start task" color="success" onClick={onClickRun}/>
                 </Box>
-                <Box sx={{display: 'flex', alignItems: 'center', gap: 3}}>
-                    <Box sx={{display: 'flex', alignItems: 'center', gap: 1}}>
-                        <Typography>Status:</Typography>
-                        <TextField value={status} sx={{width: '80px'}}/>
-                    </Box>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <Typography>Type: </Typography>
-                        <FormControl sx={{width: '200px'}}>
-                            <Select
-                                value={type}
-                                onChange={(event) => {updateTask("type",event.target.value)}}
-                            >
-                                <MenuItem value={"hom"}>Homomorphism</MenuItem>
-                                <MenuItem value={"emb"}>Embedding</MenuItem>
-                                <MenuItem value={"mat"}>k-Matching</MenuItem>
-                            </Select>
-                        </FormControl>
-                    </Box>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <Typography>Description:</Typography>
-                        <TextField value={description} sx={{width: '400px'}}/>
-                    </Box>
+                <Divider/>
+                <Box sx={{display: 'flex', alignItems: 'center', gap: 3, marginTop: 2}}>
+                    <TextField value={status} sx={{width: '80px'}} label="Status"/>
+                    <FormControl sx={{width: '200px'}}>
+                        <InputLabel id="type-label">Type</InputLabel>
+                        <Select
+                            labelId="type-label"
+                            value={type}
+                            onChange={(event) => {updateTask("type",event.target.value)}}
+                        >
+                            <MenuItem value={"hom"}>Homomorphism</MenuItem>
+                            <MenuItem value={"emb"}>Embedding</MenuItem>
+                            <MenuItem value={"mat"}>k-Matching</MenuItem>
+                        </Select>
+                    </FormControl>
+                    <TextField value={description} sx={{width: '400px'}} label="Description"/>
                 </Box>
                 <Box>
                     <Box sx={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
@@ -102,7 +97,9 @@ export default function Task({}) {
                         label=""
                     />
                 </Box>
+                <Divider/>
                 <Typography>Result: pending</Typography>
+                <Divider/>
             </Box>
         </Grid>
     </Grid>
