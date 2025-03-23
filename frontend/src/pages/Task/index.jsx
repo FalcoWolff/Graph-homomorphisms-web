@@ -24,10 +24,10 @@ export default function Task({}) {
 
     return (
     <Grid container spacing={2}>
-        <Grid item xs={2}>
+        <Grid item size={{xs: 4, sm: 3, lg: 2, xl: 1.5}}>
             <TaskList/>
         </Grid>
-        <Grid item xs={10}>
+        <Grid item size={{xs: 8, sm: 9, lg: 10, xl: 10.5}}>
             <Box>
                 <Typography variant="h4">Task {taskId}</Typography>
                 <Typography>Status: rework</Typography>
