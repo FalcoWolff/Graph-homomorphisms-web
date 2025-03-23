@@ -8,6 +8,8 @@ import GraphDisplay from "./GraphDisplay";
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import StopCircleIcon from '@mui/icons-material/StopCircle';
+import axios from "axios";
 
 export default function Task({}) {
 
@@ -16,6 +18,8 @@ export default function Task({}) {
     const dispatch = useDispatch();
     const task = useSelector(state => state.tasks.value[taskIndex])
 
+    console.log(task)
+
     const [openG, setOpenG] = useState(true);
     const [openH, setOpenH] = useState(true);
 
@@ -23,8 +27,8 @@ export default function Task({}) {
     const type = task?.type ?? "hom";
     const cfi = task?.cfi ?? false;
     const invertedCfi = task?.invertedCfi ?? false;
-    const G = task?.G;
-    const H = task?.H;
+    const G = task?.G ?? "";
+    const H = task?.H ?? "";
     let description = "";
 
     switch(type) {
@@ -46,6 +50,23 @@ export default function Task({}) {
 
     function onClickRun() {
         console.log("send task to server for execution");
+
+        const data = {...task}
+
+        axios.post('http://localhost:3000/createTask', {...data}).then((m) => {
+            console.log(m)
+            const updateData = {
+                id: m.data.id,
+                status: m.data.status
+            }
+            dispatch(updateTask_({index: taskIndex, task: updateData}))
+        }).catch((error) => {
+            console.error(error);
+        })
+    }
+
+    function onClickStop() {
+        console.log("stop task");
     }
 
     return (
@@ -58,11 +79,12 @@ export default function Task({}) {
             <Box sx={{display: 'flex', flexDirection: 'column', gap: 2}}>
                 <Typography variant="h4" sx={{margin: "16px 32px", textAlign: "center"}}>Task {taskIndex}</Typography>
                 <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                    <Chip icon={<PlayArrowIcon/>} label="Start task" color="success" onClick={onClickRun}/>
+                    {status == "rework" && <Chip icon={<PlayArrowIcon/>} label="Start task" color="success" onClick={onClickRun}/>}
+                    {status == "running" && <Chip icon={<StopCircleIcon/>} label="Stop task" color="error" onClick={onClickStop}/>}
                 </Box>
                 <Divider/>
                 <Box sx={{display: 'flex', alignItems: 'center', gap: 3, marginTop: 2}}>
-                    <TextField value={status} sx={{width: '80px'}} label="Status"/>
+                    <TextField value={status} sx={{width: '100px'}} label="Status"/>
                     <FormControl sx={{width: '200px'}}>
                         <InputLabel id="type-label">Type</InputLabel>
                         <Select

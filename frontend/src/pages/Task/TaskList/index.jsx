@@ -29,14 +29,14 @@ export default function TaskList({}) {
     return (<Container sx={{height: '100%'}}>
         <Typography variant="h4" sx={{margin: "16px 32px", textAlign: "center"}}>Tasks</Typography>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-            {tasks.map((e) => {
+            {tasks.map((e,index) => {
                 const status = e.status;
                 return (
                 <Card>
-                    <CardActionArea onClick={() => {onTaskClick(e.id)}}>
+                    <CardActionArea onClick={() => {onTaskClick(index)}}>
                         <CardContent>
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
-                                <Typography variant="h5">Task {e.id}</Typography>
+                                <Typography variant="h5">Task {index}</Typography>
                                 {status == "rework" && <BuildIcon />}
                              </Box>
                         </CardContent>

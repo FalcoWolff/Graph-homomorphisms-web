@@ -4,6 +4,7 @@ import { spawn } from 'child_process';
 import { mkdirSync } from 'fs';
 import { storeGraph } from './util/GraphHelper.js';
 import path from 'path';
+import cors from 'cors'
 
 const cProgramPath = "/home/falco/coding/vscode/projects/Graph-homomorphisms/cmake-build-release/Graph_homomorphisms";
 
@@ -43,6 +44,8 @@ app.server.on('upgrade', (request, socket, head) => {
 });
 
 app.use(express.json()); //to parse JSON bodies
+
+app.use(cors())
 
 let nextTaskId = 0;
 
@@ -119,7 +122,7 @@ app.post('/createTask', (req, res) => {
     });
 
     res.json({
-        taskId,
-        taskStatus: 'in-progress',
+        id: taskId,
+        status: 'running',
     });
 });
