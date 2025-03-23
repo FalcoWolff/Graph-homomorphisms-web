@@ -22,6 +22,7 @@ export default function Task({}) {
     const status = task?.status ?? "rework";
     const type = task?.type ?? "hom";
     const cfi = task?.cfi ?? false;
+    const invertedCfi = task?.invertedCfi ?? false;
     const G = task?.G;
     const H = task?.H;
     let description = "";
@@ -97,6 +98,13 @@ export default function Task({}) {
                         label=""
                     />
                 </Box>
+                {cfi && <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography variant="body1">G is inverted CFI-Graph:</Typography>
+                    <FormControlLabel
+                        control={<Checkbox checked={invertedCfi} onChange={() => updateTask("invertedCfi", !invertedCfi)} />}
+                        label=""
+                    />
+                </Box>}
                 <Divider/>
                 <Typography>Result: pending</Typography>
                 <Divider/>
