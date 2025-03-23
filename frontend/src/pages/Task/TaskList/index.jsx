@@ -5,6 +5,7 @@ import { insertTask } from "../../../store/tasksSlice";
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import BuildIcon from '@mui/icons-material/Build';
+import CachedIcon from '@mui/icons-material/Cached';
 
 export default function TaskList({}) {
 
@@ -38,6 +39,7 @@ export default function TaskList({}) {
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
                                 <Typography variant="h5">Task {index}</Typography>
                                 {status == "rework" && <BuildIcon />}
+                                {status == "running" && (<CachedIcon sx={{ fontSize: '40px'}} />)}
                              </Box>
                         </CardContent>
                     </CardActionArea>
