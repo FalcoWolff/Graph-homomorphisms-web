@@ -36,7 +36,7 @@ export default function GraphDisplay({input, setInput, editable}) {
         const edgeWrongFormat = 'Edge line requires format <v1> <v2>'
 
         const parsedData = input.split('\n');
-        if(parsedData.length <= 1) {
+        if(parsedData.length == 0) {
             return {status: 'failed', message: firstLineWrongFormat, line: 1}
         }
         const firstLine = parsedData[0];
