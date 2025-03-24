@@ -79,8 +79,8 @@ app.post('/createTask', (req, res) => {
             storeGraph(Hfile, H);
 
             params.push("hom")
-            params.push(Gfile)
             params.push(Hfile)
+            params.push(Gfile)
 
             if(data.cfi) {
                 params.push("--cfi");
