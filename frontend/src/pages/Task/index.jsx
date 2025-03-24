@@ -64,25 +64,32 @@ export default function Task({}) {
 
     //init websocket
     useEffect(() => {
-        const socket = new WebSocket('ws://localhost:3001');
+        function connect() {
+            const socket = new WebSocket('ws://localhost:3001');
     
-        socket.onopen = () => {
-            console.log("open websocket connection")
-        };
+            socket.onopen = () => {
+                console.log("open websocket connection")
+            };
+        
+            socket.onerror = (error) => {
+                console.log("websocket error!")
+                console.error(error)
+            };
+        
+            socket.onclose = () => {
+                console.log("close websocket connection - reconnect after 3 seconds")
+                setTimeout(connect, 3000)
+            };
     
-        socket.onerror = (error) => {
-            console.log("websocket error!")
-            console.error(error)
-        };
-    
-        socket.onclose = () => {
-            console.log("close websocket connection")
-        };
+            setSocket(socket);
+        }
 
-        setSocket(socket);
+        connect();
     
         return () => {
-          socket.close();
+            if(socket) {
+                socket.close();
+            }
         };
       }, []);
 

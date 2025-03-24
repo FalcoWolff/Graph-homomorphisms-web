@@ -139,7 +139,7 @@ export default function GraphDisplay({input, setInput, editable}) {
                     edges.push({ from: parseInt(from), to: parseInt(to) });
                 });
             }else {
-                throw "unknown format";
+                return false;
             }
 
             const uniqueNodes = [...new Map(nodes.map((item) => [item.id, item])).values()];
