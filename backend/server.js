@@ -17,7 +17,6 @@ const port = process.env.PORT || 3000;
  */
 const app = express();
 
-// Middleware to handle WebSocket upgrade
 app.server = app.listen(port, () => {
     console.log(`REST API server running on http://localhost:${port}`);
 });
