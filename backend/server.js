@@ -12,7 +12,7 @@ const expressPort = 3000;
 const websocketPort = 3001;
 
 const wss = new WebSocketServer({ port: websocketPort });
-const wsClients = [];//store the active ws clients
+let wsClients = [];//store the active ws clients
 
 wss.on('connection', (ws) => {
   console.log('Client connected');
@@ -24,7 +24,7 @@ wss.on('connection', (ws) => {
 
   ws.on('close', () => {
     console.log('Client disconnected');
-    wsClients = wsClients.clients.filter(client => client !== ws);
+    wsClients = wsClients.filter(client => client !== ws);
   });
 });
 
@@ -94,16 +94,18 @@ app.post('/createTask', (req, res) => {
         console.log(`C program finished with code ${code} and output: ${output}`);
 
         const message = {
-            taskId,
-            taskStatus: 'completed',
+            id: taskId,
+            status: 'completed',
             output: output,
             exitCode: code,
         };
 
         //notify all clients about the task completion
-        wsClients.forEach((client) => {
-            client.send(JSON.stringify(message));
-        });
+        setTimeout(() => {
+            wsClients.forEach((client) => {
+                client.send(JSON.stringify(message));
+            });
+        }, 3000)
     });
 
     cProgram.on('error', (err) => {
@@ -111,14 +113,16 @@ app.post('/createTask', (req, res) => {
 
         //notify all clients about the error
         const errorMessage = {
-            taskId,
-            taskStatus: 'error',
+            id: taskId,
+            status: 'error',
             error: err.message,
         };
 
-        wsClients.forEach((client) => {
-            client.send(JSON.stringify(errorMessage));
-        });
+        setTimeout(() => {
+            wsClients.forEach((client) => {
+                client.send(JSON.stringify(errorMessage));
+            });
+        }, 3000)
     });
 
     res.json({

@@ -6,14 +6,13 @@ import { useState } from "react";
 import { useNavigate } from "react-router";
 import BuildIcon from '@mui/icons-material/Build';
 import CachedIcon from '@mui/icons-material/Cached';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 
 export default function TaskList({}) {
 
     const tasks = useSelector(state => state.tasks.value);
     const dispatch = useDispatch();
     const navigate = useNavigate();
-
-    console.log(tasks)
 
     const [nextTaskId, setNextTaskId] = useState(0);
 
@@ -40,6 +39,7 @@ export default function TaskList({}) {
                                 <Typography variant="h5">Task {index}</Typography>
                                 {status == "rework" && <BuildIcon />}
                                 {status == "running" && (<CachedIcon sx={{ fontSize: '40px'}} />)}
+                                {status == "completed" && <CheckCircleOutlineIcon sx={{ fontSize: '40px'}} color="success"/>}
                              </Box>
                         </CardContent>
                     </CardActionArea>

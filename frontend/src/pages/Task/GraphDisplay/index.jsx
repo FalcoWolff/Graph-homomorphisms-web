@@ -3,7 +3,7 @@ import Graph from "react-graph-vis"
 import { TextField, Button, Box, Grid2 } from '@mui/material';
 import uuid from 'react-uuid';
 
-export default function GraphDisplay({input, setInput}) {
+export default function GraphDisplay({input, setInput, editable}) {
 
     let [graphKey, setGraphKey] = useState(uuid())
     const [graphData, setGraphData] = useState({ nodes: [], edges: [] });
@@ -96,6 +96,7 @@ export default function GraphDisplay({input, setInput}) {
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     sx={{width: '300px'}}
+                    disabled={!editable}
                 />
                 <Button onClick={handleGraphInput}>Show Graph</Button>
             </Grid2>

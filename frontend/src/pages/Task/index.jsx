@@ -2,26 +2,29 @@ import { useParams } from "react-router"
 import TaskList from "./TaskList";
 import { Box, Checkbox, Chip, Divider, FormControl, FormControlLabel, FormHelperText, Grid2 as Grid, IconButton, Input, InputLabel, MenuItem, Select, TextField, Typography } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { updateTask as updateTask_ } from "../../store/tasksSlice";
 import GraphDisplay from "./GraphDisplay";
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import StopCircleIcon from '@mui/icons-material/StopCircle';
+import BuildIcon from '@mui/icons-material/Build';
 import axios from "axios";
+import Build from "@mui/icons-material/Build";
 
 export default function Task({}) {
 
     const params = useParams();
     const taskIndex = parseInt(params.taskIndex)
     const dispatch = useDispatch();
+    const tasks = useSelector(state => state.tasks.value);
     const task = useSelector(state => state.tasks.value[taskIndex])
-
-    console.log(task)
 
     const [openG, setOpenG] = useState(true);
     const [openH, setOpenH] = useState(true);
+
+    const [socket, setSocket] = useState();
 
     const status = task?.status ?? "rework";
     const type = task?.type ?? "hom";
@@ -29,6 +32,8 @@ export default function Task({}) {
     const invertedCfi = task?.invertedCfi ?? false;
     const G = task?.G ?? "";
     const H = task?.H ?? "";
+    const result = task?.result ?? "-"
+    const editable = status == "rework";
     let description = "";
 
     switch(type) {
@@ -42,6 +47,54 @@ export default function Task({}) {
             description = "Calculate the number of homs from H to G"
     }
 
+    function applyWebsocketPacket(data) {
+        if(data.status == "completed") {
+            const id = data.id;
+            for(let i = 0; i < tasks.length; i++) {
+                if(tasks[i].id == id) {
+                    //found task
+                    const newData = {...tasks[i], status: data.status, result: data.output}
+                    console.log(newData)
+                    dispatch(updateTask_({index: i, task: newData}))
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    useEffect(() => {
+        const socket = new WebSocket('ws://localhost:3001');
+    
+        socket.onopen = () => {
+            console.log("open websocket connection")
+        };
+    
+        socket.onerror = (error) => {
+            console.log("websocket error!")
+            console.error(error)
+        };
+    
+        socket.onclose = () => {
+            console.log("close websocket connection")
+        };
+
+        setSocket(socket);
+    
+        return () => {
+          socket.close();
+        };
+      }, []);
+
+    useEffect(() => {
+        if(!socket) return;
+        socket.onmessage = (event) => {
+            const data = JSON.parse(event.data)
+            console.log("websocket received data: " + JSON.stringify(data));
+            applyWebsocketPacket(data)
+        };
+    }, [socket, tasks])
+
     function updateTask(field, value) {
         const newTask = {...task}
         newTask[field] = value
@@ -54,11 +107,12 @@ export default function Task({}) {
         const data = {...task}
 
         axios.post('http://localhost:3000/createTask', {...data}).then((m) => {
-            console.log(m)
+            const id = m.data.id;
             const updateData = {
-                id: m.data.id,
+                id,
                 status: m.data.status
             }
+            console.log("got response from http://..../createTask -> update Tasks")
             dispatch(updateTask_({index: taskIndex, task: updateData}))
         }).catch((error) => {
             console.error(error);
@@ -81,16 +135,18 @@ export default function Task({}) {
                 <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                     {status == "rework" && <Chip icon={<PlayArrowIcon/>} label="Start task" color="success" onClick={onClickRun}/>}
                     {status == "running" && <Chip icon={<StopCircleIcon/>} label="Stop task" color="error" onClick={onClickStop}/>}
+                    {status == "completed" && <Chip icon={<BuildIcon/>} label="Rework task" color="info" onClick={onClickStop}/>}
                 </Box>
                 <Divider/>
                 <Box sx={{display: 'flex', alignItems: 'center', gap: 3, marginTop: 2}}>
-                    <TextField value={status} sx={{width: '100px'}} label="Status"/>
+                    <TextField value={status} sx={{width: '120px'}} label="Status"/>
                     <FormControl sx={{width: '200px'}}>
                         <InputLabel id="type-label">Type</InputLabel>
                         <Select
                             labelId="type-label"
                             value={type}
                             onChange={(event) => {updateTask("type",event.target.value)}}
+                            disabled={!editable}
                         >
                             <MenuItem value={"hom"}>Homomorphism</MenuItem>
                             <MenuItem value={"emb"}>Embedding</MenuItem>
@@ -104,20 +160,21 @@ export default function Task({}) {
                         <Typography>Graph H</Typography>
                         <IconButton onClick={() => {setOpenH(!openH)}}>{openH ? <KeyboardArrowDownIcon/> : <KeyboardArrowRightIcon/>}</IconButton>
                     </Box>
-                    <Box sx={{paddingLeft: 2}}>{openH && <GraphDisplay input={H} setInput={(m) => updateTask("H", m)}/>}</Box>
+                    <Box sx={{paddingLeft: 2}}>{openH && <GraphDisplay input={H} setInput={(m) => updateTask("H", m)} editable={editable}/>}</Box>
                 </Box>
                 <Box>
                     <Box sx={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
                         <Typography>Graph G</Typography>
                         <IconButton onClick={() => {setOpenG(!openG)}}>{openG ? <KeyboardArrowDownIcon/> : <KeyboardArrowRightIcon/>}</IconButton>
                     </Box>
-                    <Box sx={{paddingLeft: 2}}>{openG && <GraphDisplay input={G} setInput={(m) => updateTask("G", m)}/>}</Box>
+                    <Box sx={{paddingLeft: 2}}>{openG && <GraphDisplay input={G} setInput={(m) => updateTask("G", m)} editable={editable}/>}</Box>
                 </Box>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                     <Typography variant="body1">G is CFI-Graph:</Typography>
                     <FormControlLabel
                         control={<Checkbox checked={cfi} onChange={() => updateTask("cfi", !cfi)} />}
                         label=""
+                        disabled={!editable}
                     />
                 </Box>
                 {cfi && <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -125,10 +182,11 @@ export default function Task({}) {
                     <FormControlLabel
                         control={<Checkbox checked={invertedCfi} onChange={() => updateTask("invertedCfi", !invertedCfi)} />}
                         label=""
+                        disabled={!editable}
                     />
                 </Box>}
                 <Divider/>
-                <Typography>Result: pending</Typography>
+                <Typography>Result: {result}</Typography>
                 <Divider/>
             </Box>
         </Grid>
