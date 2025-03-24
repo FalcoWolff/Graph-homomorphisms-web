@@ -11,7 +11,7 @@ import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import StopCircleIcon from '@mui/icons-material/StopCircle';
 import BuildIcon from '@mui/icons-material/Build';
 import axios from "axios";
-import Build from "@mui/icons-material/Build";
+import staticData from "../../assets/staticData.js";
 
 export default function Task({}) {
 
@@ -38,13 +38,13 @@ export default function Task({}) {
 
     switch(type) {
         case "emb":
-            description = "Calculate the number of injective homs from H to G"
+            description = staticData.message.embDescription
             break;
         case "mat":
-            description = "Calculate the number of k-matchings in G"
+            description = staticData.message.matDescription
             break;
         default:
-            description = "Calculate the number of homs from H to G"
+            description = staticData.message.homDescription
     }
 
     function applyWebsocketPacket(data) {
