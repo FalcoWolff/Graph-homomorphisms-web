@@ -5,13 +5,31 @@ import { existsSync, mkdirSync, rmSync } from 'fs';
 import { storeGraph } from './util/GraphHelper.js';
 import path from 'path';
 import cors from 'cors'
+import dotenv from 'dotenv';
 
-const cProgramPath = "/home/falco/coding/vscode/projects/Graph-homomorphisms/cmake-build-release/Graph_homomorphisms";
+dotenv.config();  // Load environment variables from the .env file
 
-const expressPort = 3000;
-const websocketPort = 3001;
+const cProgramPath = process.env.PROGRAM_PATH || "/default/path";
+const port = process.env.PORT || 3000;
 
-const wss = new WebSocketServer({ port: websocketPort });
+/*
+ * init express
+ */
+const app = express();
+
+// Middleware to handle WebSocket upgrade
+app.server = app.listen(port, () => {
+    console.log(`REST API server running on http://localhost:${port}`);
+});
+
+app.use(express.json()); //to parse JSON bodies
+
+app.use(cors())
+
+/*
+ * init websocket
+ */
+const wss = new WebSocketServer({server: app.server});
 let wsClients = [];//store the active ws clients
 
 wss.on('connection', (ws) => {
@@ -28,24 +46,11 @@ wss.on('connection', (ws) => {
   });
 });
 
-console.log(`WebSocket server running on ws://localhost:${websocketPort}`);
+console.log(`WebSocket server running on ws://localhost:${port}`);
 
-const app = express();
-
-// Middleware to handle WebSocket upgrade
-app.server = app.listen(expressPort, () => {
-    console.log(`REST API server running on http://localhost:${expressPort}`);
-});
-
-app.server.on('upgrade', (request, socket, head) => {
-    wss.handleUpgrade(request, socket, head, (ws) => {
-        wss.emit('connection', ws, request);
-    });
-});
-
-app.use(express.json()); //to parse JSON bodies
-
-app.use(cors())
+/*
+ * init rest api
+ */
 
 let nextTaskId = 0;
 
