@@ -18,7 +18,7 @@ export default function TaskList({}) {
 
     function addNewTask() {
         console.log("add new task");
-        dispatch(insertTask({status: "rework"}));
+        dispatch(insertTask({status: "rework", type: "hom"}));
         setNextTaskId(nextTaskId+1)
     }
 
