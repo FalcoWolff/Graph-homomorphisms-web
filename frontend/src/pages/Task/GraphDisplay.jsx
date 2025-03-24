@@ -7,9 +7,96 @@ export default function GraphDisplay({input, setInput, editable}) {
 
     let [graphKey, setGraphKey] = useState(uuid())
     const [graphData, setGraphData] = useState({ nodes: [], edges: [] });
+    const [parserFeedback, setParserFeedback] = useState(parseGraphInput());
+    const parserFailed = parserFeedback.status == 'failed'
 
+    console.log(parserFeedback)
+
+    //adjust parser feedback when the input changes
     useEffect(() => {
-        handleGraphInput();
+        setParserFeedback(parseGraphInput())
+    }, [input])
+
+    function parseGraphInput() {
+
+        const firstLineWrongFormat = 'First line requires format "graph edge-list <n> <m>"'
+        const firstLineStartsWith = 'First line has to begin with "graph edge-list ..."'
+        const parameterNisNotANumber = 'The parameter <n> in the first line has to be a number'
+        const parameterMisNotANumber = 'The parameter <m> in the first line has to be a number'
+        const emptyGraph = 'The graph cannot be empty. At least one node is required'
+        const edgeNodeIsBiggerThanN = 'Node number does not represent a vaild node'
+        const edgeNodeIsNotANumber = 'Node number is not a valid integer'
+        const edgeWrongFormat = 'Edge line requires format <v1> <v2>'
+
+        const parsedData = input.split('\n');
+        if(parsedData.length <= 1) {
+            return {status: 'failed', message: firstLineWrongFormat, line: 1}
+        }
+        const firstLine = parsedData[0];
+
+        if(!firstLine.startsWith("graph edge-list")) {
+            return {status: 'failed', message: firstLineStartsWith, line: 1}
+        }
+
+        const splitFirstLine = firstLine.split(" ");
+
+        if(splitFirstLine.length != 4) {
+            return {status: 'failed', message: firstLineWrongFormat, line: 1}
+        }
+
+        const integerRegex = /^-?\d+$/;
+
+        if(!integerRegex.test(splitFirstLine[2])) {
+            return {status: 'failed', message: parameterNisNotANumber, line: 1}
+        }
+
+        if(!integerRegex.test(splitFirstLine[3])) {
+            return {status: 'failed', message: parameterMisNotANumber, line: 1}
+        }
+
+        const n = parseInt(splitFirstLine[2]);
+        const m = parseInt(splitFirstLine[3]);
+
+        if(n == 0) {
+            return {status: 'failed', message: emptyGraph, line: 1}
+        }
+
+        for(let index = 1; index < parsedData.length; index++) {
+            const line = index+1;
+            const edge = parsedData[index]
+
+            if(edge.split(' ').length != 2) {
+                return {status: 'failed', message: edgeWrongFormat, line: line}
+            }
+
+            const [from, to] = edge.split(' ');
+
+            if(!integerRegex.test(from)) {
+                return {status: 'failed', message: edgeNodeIsNotANumber, line: line}
+            }
+            if(!integerRegex.test(to)) {
+                return {status: 'failed', message: edgeNodeIsNotANumber, line: line}
+            }
+
+            const v1 = parseInt(from)
+            const v2 = parseInt(to)
+
+            if(v1 >= n) {
+                return {status: 'failed', message: edgeNodeIsBiggerThanN, line: line}
+            }
+            if(v2 >= n) {
+                return {status: 'failed', message: edgeNodeIsBiggerThanN, line: line}
+            }
+        }
+
+        return {status: 'succes'}
+    }
+
+    //create graph on mount iff parser succeded
+    useEffect(() => {
+        if(!parserFailed) {
+            buildGraph();
+        }
     }, [])
 
     const handleGraphLoad = (network) => {
@@ -18,15 +105,15 @@ export default function GraphDisplay({input, setInput, editable}) {
     };
 
     /*
-    demo format:
-    graph adj-list 4 5
-    0 1
-    1 2
-    2 3
-    3 0
-    3 1
+     * demo format:
+     * graph adj-list 4 5
+     * 0 1
+     * 1 2
+     * 2 3
+     * 3 0
+     * 3 1
     */
-    const handleGraphInput = () => {
+    const buildGraph = () => {
         console.log("calc graph")
 
         try {
@@ -96,9 +183,11 @@ export default function GraphDisplay({input, setInput, editable}) {
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     sx={{width: '300px'}}
+                    error={parserFailed}
+                    helperText={parserFailed && `Line: ${parserFeedback.line} Message: '${parserFeedback.message}'`}
                     disabled={!editable}
                 />
-                <Button onClick={handleGraphInput}>Show Graph</Button>
+                <Button onClick={buildGraph} disabled={parserFailed}>Show Graph</Button>
             </Grid2>
         </Grid2>
     );
