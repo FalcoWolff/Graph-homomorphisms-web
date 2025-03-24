@@ -69,22 +69,49 @@ app.post('/createTask', (req, res) => {
 
     let params = [];
 
-    switch(type) {
-        case "hom":
-            const G = data.G ?? ""
-            const H = data.H ?? ""
-            const Gfile = path.resolve(taskFolder + "/Graph_G.txt");
-            const Hfile = path.resolve(taskFolder + "/Graph_H.txt");
-            storeGraph(Gfile, G);
-            storeGraph(Hfile, H);
+    if(type == "hom") {
+        const G = data.G ?? ""
+        const H = data.H ?? ""
+        const Gfile = path.resolve(taskFolder + "/Graph_G.txt");
+        const Hfile = path.resolve(taskFolder + "/Graph_H.txt");
+        storeGraph(Gfile, G);
+        storeGraph(Hfile, H);
 
-            params.push("hom")
-            params.push(Hfile)
-            params.push(Gfile)
+        params.push("hom")
+        params.push(Hfile)
+        params.push(Gfile)
 
-            if(data.cfi) {
-                params.push("--cfi");
-            }
+        if(data.cfi) {
+            params.push("--cfi");
+        }
+    }else if(type == "emb") {
+        const G = data.G ?? ""
+        const H = data.H ?? ""
+        const Gfile = path.resolve(taskFolder + "/Graph_G.txt");
+        const Hfile = path.resolve(taskFolder + "/Graph_H.txt");
+        storeGraph(Gfile, G);
+        storeGraph(Hfile, H);
+
+        params.push("emb")
+        params.push(Hfile)
+        params.push(Gfile)
+
+        if(data.cfi) {
+            params.push("--cfi");
+        }
+    }else if(type == "mat") {
+        const G = data.G ?? ""
+        const k = parseInt(data.k) || 1
+        const Gfile = path.resolve(taskFolder + "/Graph_G.txt");
+        storeGraph(Gfile, G);
+
+        params.push("mat")
+        params.push(k)
+        params.push(Gfile)
+
+        if(data.cfi) {
+            params.push("--cfi");
+        }
     }
 
     // Start the task (spawning the C program)

@@ -34,6 +34,7 @@ export default function Task({}) {
     const H = task?.H ?? "";
     const result = task?.result ?? "-"
     const editable = status == "rework";
+    const k = task?.k ?? 1;
     let description = "";
 
     switch(type) {
@@ -154,7 +155,29 @@ export default function Task({}) {
                         </Select>
                     </FormControl>
                     <TextField value={description} sx={{width: '400px'}} label="Description"/>
+                    {type == "mat" && (
+                        <FormControl sx={{width: '100px'}}>
+                            <InputLabel id="k-label">K</InputLabel>
+                            <Select
+                                labelId="k-label"
+                                value={k}
+                                onChange={(event) => {updateTask("k",event.target.value)}}
+                                disabled={!editable}
+                            >
+                                <MenuItem value={1}>1</MenuItem>
+                                <MenuItem value={2}>2</MenuItem>
+                                <MenuItem value={3}>3</MenuItem>
+                                <MenuItem value={4}>4</MenuItem>
+                                <MenuItem value={5}>5</MenuItem>
+                                <MenuItem value={6}>6</MenuItem>
+                                <MenuItem value={7}>7</MenuItem>
+                                <MenuItem value={8}>8</MenuItem>
+                                <MenuItem value={9}>9</MenuItem>
+                            </Select>
+                        </FormControl>
+                    )}
                 </Box>
+                {type != "mat" &&
                 <Box>
                     <Box sx={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
                         <Typography>Graph H</Typography>
@@ -162,6 +185,7 @@ export default function Task({}) {
                     </Box>
                     <Box sx={{paddingLeft: 2}}>{openH && <GraphDisplay input={H} setInput={(m) => updateTask("H", m)} editable={editable}/>}</Box>
                 </Box>
+                }
                 <Box>
                     <Box sx={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
                         <Typography>Graph G</Typography>
