@@ -81,6 +81,10 @@ app.post('/createTask', (req, res) => {
             params.push("hom")
             params.push(Gfile)
             params.push(Hfile)
+
+            if(data.cfi) {
+                params.push("--cfi");
+            }
     }
 
     // Start the task (spawning the C program)
