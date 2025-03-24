@@ -7,6 +7,7 @@ import { useNavigate } from "react-router";
 import BuildIcon from '@mui/icons-material/Build';
 import CachedIcon from '@mui/icons-material/Cached';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import ReportGmailerrorredIcon from '@mui/icons-material/ReportGmailerrorred';
 
 export default function TaskList({}) {
 
@@ -40,6 +41,7 @@ export default function TaskList({}) {
                                 {status == "rework" && <BuildIcon />}
                                 {status == "running" && (<CachedIcon sx={{ fontSize: '40px'}} />)}
                                 {status == "completed" && <CheckCircleOutlineIcon sx={{ fontSize: '40px'}} color="success"/>}
+                                {status == "error" && <ReportGmailerrorredIcon sx={{ fontSize: '40px'}} color="error"/>}
                              </Box>
                         </CardContent>
                     </CardActionArea>

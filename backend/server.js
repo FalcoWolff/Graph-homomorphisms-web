@@ -110,6 +110,10 @@ app.post('/createTask', (req, res) => {
             exitCode: code,
         };
 
+        if(code != 0) {
+            message.status = 'error'
+        }
+
         //notify all clients about the task completion
         setTimeout(() => {
             wsClients.forEach((client) => {
@@ -125,7 +129,7 @@ app.post('/createTask', (req, res) => {
         const errorMessage = {
             id: taskId,
             status: 'error',
-            error: err.message,
+            output: err.message,
         };
 
         setTimeout(() => {

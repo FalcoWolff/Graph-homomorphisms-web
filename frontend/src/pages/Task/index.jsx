@@ -48,16 +48,14 @@ export default function Task({}) {
     }
 
     function applyWebsocketPacket(data) {
-        if(data.status == "completed") {
-            const id = data.id;
-            for(let i = 0; i < tasks.length; i++) {
-                if(tasks[i].id == id) {
-                    //found task
-                    const newData = {...tasks[i], status: data.status, result: data.output}
-                    console.log(newData)
-                    dispatch(updateTask_({index: i, task: newData}))
-                    return true;
-                }
+        const id = data.id;
+        for(let i = 0; i < tasks.length; i++) {
+            if(tasks[i].id == id) {
+                //found task
+                const newData = {...tasks[i], status: data.status, result: data.output}
+                console.log(newData)
+                dispatch(updateTask_({index: i, task: newData}))
+                return true;
             }
         }
         return false;
@@ -137,7 +135,7 @@ export default function Task({}) {
                 <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                     {status == "rework" && <Chip icon={<PlayArrowIcon/>} label="Start task" color="success" onClick={onClickRun}/>}
                     {status == "running" && <Chip icon={<StopCircleIcon/>} label="Stop task" color="error" onClick={onClickStop}/>}
-                    {status == "completed" && <Chip icon={<BuildIcon/>} label="Rework task" color="info" onClick={onClickStop}/>}
+                    {(status == "completed" || status == "error") && <Chip icon={<BuildIcon/>} label="Rework task" color="info" onClick={onClickStop}/>}
                 </Box>
                 <Divider/>
                 <Box sx={{display: 'flex', alignItems: 'center', gap: 3, marginTop: 2}}>
