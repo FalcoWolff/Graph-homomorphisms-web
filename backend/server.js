@@ -1,7 +1,7 @@
 import WebSocket, {WebSocketServer} from 'ws';
 import express from 'express';
 import { spawn } from 'child_process';
-import { mkdirSync } from 'fs';
+import { existsSync, mkdirSync, rmSync } from 'fs';
 import { storeGraph } from './util/GraphHelper.js';
 import path from 'path';
 import cors from 'cors'
@@ -60,6 +60,11 @@ app.post('/createTask', (req, res) => {
     console.log("type: " + type);
 
     const taskFolder = "./tasks/task_" + taskId
+
+    if (existsSync(taskFolder)) {
+        rmSync(taskFolder, { recursive: true, force: true });
+    }
+
     mkdirSync(taskFolder);
 
     let params = [];
@@ -88,6 +93,7 @@ app.post('/createTask', (req, res) => {
 
     cProgram.stderr.on('data', (data) => {
         console.error(`stderr: ${data}`);
+        output += data.toString();
     });
 
     cProgram.on('close', (code) => {
