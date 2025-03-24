@@ -2,15 +2,22 @@ import React, { useEffect, useRef, useState } from 'react';
 import Graph from "react-graph-vis"
 import { TextField, Button, Box, Grid2 } from '@mui/material';
 import uuid from 'react-uuid';
+import { useParams } from 'react-router';
 
 export default function GraphDisplay({input, setInput, editable}) {
+
+    const params = useParams();
+    const taskIndex = parseInt(params.taskIndex)
 
     let [graphKey, setGraphKey] = useState(uuid())
     const [graphData, setGraphData] = useState({ nodes: [], edges: [] });
     const [parserFeedback, setParserFeedback] = useState(parseGraphInput());
     const parserFailed = parserFeedback.status == 'failed'
 
-    console.log(parserFeedback)
+    //build Graph when new task is accessed
+    useEffect(() => {
+        buildGraph();
+    }, [taskIndex])
 
     //adjust parser feedback when the input changes
     useEffect(() => {
@@ -92,13 +99,6 @@ export default function GraphDisplay({input, setInput, editable}) {
         return {status: 'succes'}
     }
 
-    //create graph on mount iff parser succeded
-    useEffect(() => {
-        if(!parserFailed) {
-            buildGraph();
-        }
-    }, [])
-
     const handleGraphLoad = (network) => {
         // Ensure the graph fits into the container once it's loaded
         network.fit();
@@ -114,6 +114,7 @@ export default function GraphDisplay({input, setInput, editable}) {
      * 3 1
     */
     const buildGraph = () => {
+
         console.log("calc graph")
 
         try {
@@ -141,9 +142,6 @@ export default function GraphDisplay({input, setInput, editable}) {
                 throw "unknown format";
             }
 
-            console.log(nodes)
-            console.log(edges)
-
             const uniqueNodes = [...new Map(nodes.map((item) => [item.id, item])).values()];
 
             setGraphKey(uuid())
@@ -151,10 +149,13 @@ export default function GraphDisplay({input, setInput, editable}) {
                 nodes: uniqueNodes,
                 edges: edges,
             });
-            
+
+            return true;
 
         }catch(error) {
             console.warn(error)
+            setGraphData({ nodes: [], edges: [] });
+            return false;
         }
     };
 
