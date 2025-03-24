@@ -1,5 +1,6 @@
-import { Box, Button, Typography } from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Typography } from "@mui/material";
 import DoubleArrowIcon from '@mui/icons-material/DoubleArrow';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useNavigate } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 import { insertTask } from "../../store/tasksSlice";
@@ -30,7 +31,7 @@ export default function Home({}) {
 
             dispatch(insertTask(d));
         }
-        
+
         navigate("/task/0")
     }
 
@@ -81,6 +82,7 @@ export default function Home({}) {
     };
 
     return (
+        <>
         <div style={{position: 'relative', height: '90vh'}}>
             <Box sx={{display: 'flex', justifyContent: 'center', zIndex: 5, position: 'relative', marginTop: 8, marginBottom: 2}}>
                 <Box>
@@ -90,5 +92,59 @@ export default function Home({}) {
             </Box>
             <Graph graph={graph} options={options} key={graphKey}/>
         </div>
+        <Box sx={{display: 'flex', justifyContent: 'center'}}>
+            <Box sx={{ width: '50%'}}>
+                <Accordion>
+                    <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        aria-controls="about-content"
+                        id="about-header"
+                    >
+                        <Typography variant="h6">About</Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                        <Typography>
+                            Uni Project to work with homomorphisms of Graphs and CFI Graphs.<br/>
+                            We also included embedings and k-matchings (up to k=9).
+                        </Typography>
+                    </AccordionDetails>
+                </Accordion>
+
+                <Accordion>
+                    <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        aria-controls="faq-content"
+                        id="faq-header"
+                    >
+                        <Typography variant="h6">FAQ</Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                        <Typography>
+                            What is the correct format for entering a Graph?<br/>
+                            Answer:<br/>
+                            What are CFI Graphs?<br/>
+                            Answer: <br/>
+                        </Typography>
+                    </AccordionDetails>
+                </Accordion>
+
+                {/* Add more sections like this */}
+                <Accordion>
+                    <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        aria-controls="contact-content"
+                        id="contact-header"
+                    >
+                        <Typography variant="h6">Contact</Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                        <Typography>
+                            -
+                        </Typography>
+                    </AccordionDetails>
+                </Accordion>
+            </Box>
+        </Box>
+        </>
     )
 }
