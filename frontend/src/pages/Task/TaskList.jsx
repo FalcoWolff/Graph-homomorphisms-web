@@ -1,7 +1,7 @@
 import {useDispatch, useSelector} from "react-redux";
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { Box, Card, CardActionArea, CardContent, Container, IconButton, Typography } from "@mui/material";
-import { insertTask } from "../../../store/tasksSlice";
+import { insertTask } from "../../store/tasksSlice";
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import BuildIcon from '@mui/icons-material/Build';
