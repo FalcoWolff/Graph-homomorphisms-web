@@ -1,7 +1,7 @@
 import { Box, Button, Typography } from "@mui/material";
 import DoubleArrowIcon from '@mui/icons-material/DoubleArrow';
 import { useNavigate } from "react-router";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { insertTask } from "../../store/tasksSlice";
 import uuid from "react-uuid";
 import randomIntFromInterval from "../../util/randomIntFromInterval";
@@ -13,20 +13,24 @@ export default function Home({}) {
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
+    const tasks = useSelector(state => state.tasks.value);
+
     let [graphKey, setGraphKey] = useState(uuid())
     const [graph, setGraph] = useState({nodes: [], edges: []})
 
     function onClickGetStarted() {
 
-        const d = {
-            status: 'rework',
-            type: 'hom',
-            H: 'graph edge-list 3 3\n0 1\n1 2\n2 0',
-            G: 'graph edge-list 4 5\n0 1\n1 2\n2 3\n3 0\n3 1',
+        if(tasks.length == 0) {
+            const d = {
+                status: 'rework',
+                type: 'hom',
+                H: 'graph edge-list 3 3\n0 1\n1 2\n2 0',
+                G: 'graph edge-list 4 5\n0 1\n1 2\n2 3\n3 0\n3 1',
+            }
+
+            dispatch(insertTask(d));
         }
-
-        dispatch(insertTask(d));
-
+        
         navigate("/task/0")
     }
 
