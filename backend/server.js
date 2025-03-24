@@ -71,8 +71,8 @@ app.post('/createTask', (req, res) => {
 
     switch(type) {
         case "hom":
-            const G = data.G;
-            const H = data.H;
+            const G = data.G ?? ""
+            const H = data.H ?? ""
             const Gfile = path.resolve(taskFolder + "/Graph_G.txt");
             const Hfile = path.resolve(taskFolder + "/Graph_H.txt");
             storeGraph(Gfile, G);
