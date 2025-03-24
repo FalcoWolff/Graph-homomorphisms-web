@@ -12,6 +12,7 @@ import StopCircleIcon from '@mui/icons-material/StopCircle';
 import BuildIcon from '@mui/icons-material/Build';
 import axios from "axios";
 import staticData from "../../assets/staticData.js";
+const apiUrl = import.meta.env.VITE_API_URL;
 
 export default function Task({}) {
 
@@ -65,7 +66,7 @@ export default function Task({}) {
     //init websocket
     useEffect(() => {
         function connect() {
-            const socket = new WebSocket('ws://localhost:3000');
+            const socket = new WebSocket(`ws://${apiUrl}`);
     
             socket.onopen = () => {
                 console.log("open websocket connection")
@@ -114,7 +115,7 @@ export default function Task({}) {
 
         const data = {...task}
 
-        axios.post('http://localhost:3000/createTask', {...data}).then((m) => {
+        axios.post(`http://${apiUrl}/createTask`, {...data}).then((m) => {
             const id = m.data.id;
             const updateData = {
                 id,
