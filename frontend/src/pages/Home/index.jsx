@@ -35,7 +35,7 @@ export default function Home({}) {
         const edges = []
 
         const n = randomIntFromInterval(20, 100);
-        const m = randomIntFromInterval(n, 2.5*n);
+        const m = randomIntFromInterval(1.5*n, 2.5*n);
 
         for(let i = 0; i < n; i++) {
             nodes.push({id: i, label: i});
@@ -69,7 +69,7 @@ export default function Home({}) {
         edges: {
             smooth: true,
         },
-        height: '800px',
+        height: '700px',
         interaction: {
             zoomView: false
         }
@@ -78,7 +78,7 @@ export default function Home({}) {
 
     return (
         <div style={{position: 'relative', height: '90vh'}}>
-            <Box sx={{display: 'flex', justifyContent: 'center', zIndex: 5, position: 'relative', marginTop: 8}}>
+            <Box sx={{display: 'flex', justifyContent: 'center', zIndex: 5, position: 'relative', marginTop: 8, marginBottom: 2}}>
                 <Box>
                     <Typography variant="h2">Welcome to Graph-homs-web!</Typography>
                     <Button size="large" variant="contained" endIcon={<DoubleArrowIcon/>} onClick={onClickGetStarted}>Get started</Button>
