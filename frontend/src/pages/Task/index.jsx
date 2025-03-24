@@ -63,6 +63,7 @@ export default function Task({}) {
         return false;
     }
 
+    //init websocket
     useEffect(() => {
         const socket = new WebSocket('ws://localhost:3001');
     
@@ -86,6 +87,7 @@ export default function Task({}) {
         };
       }, []);
 
+    //update socket.onmessage
     useEffect(() => {
         if(!socket) return;
         socket.onmessage = (event) => {
