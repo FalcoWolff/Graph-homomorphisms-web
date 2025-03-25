@@ -85,7 +85,9 @@ app.post('/createTask', (req, res) => {
         params.push(Hfile)
         params.push(Gfile)
 
-        if(data.cfi) {
+        if(data.invertedCfi) {
+            params.push("--invertedCfi")
+        }else if(data.cfi) {
             params.push("--cfi");
         }
     }else if(type == "emb") {
@@ -100,7 +102,9 @@ app.post('/createTask', (req, res) => {
         params.push(Hfile)
         params.push(Gfile)
 
-        if(data.cfi) {
+        if(data.invertedCfi) {
+            params.push("--invertedCfi")
+        }else if(data.cfi) {
             params.push("--cfi");
         }
     }else if(type == "mat") {
@@ -113,10 +117,14 @@ app.post('/createTask', (req, res) => {
         params.push(k)
         params.push(Gfile)
 
-        if(data.cfi) {
+        if(data.invertedCfi) {
+            params.push("--invertedCfi")
+        }else if(data.cfi) {
             params.push("--cfi");
         }
     }
+
+    console.log(`execute program with params: ${params}`)
 
     // Start the task (spawning the C program)
     const cProgram = spawn(cProgramPath, params);
