@@ -132,6 +132,10 @@ export default function Task({}) {
         console.log("stop task");
     }
 
+    function onClickRework() {
+        dispatch(updateTask("status","rework"));
+    }
+
     return (
     <Grid container spacing={2}>
         <Grid item size={{xs: 4, sm: 3, lg: 2, xl: 1.5}}>
@@ -144,9 +148,15 @@ export default function Task({}) {
                 <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                     {status == "rework" && <Chip icon={<PlayArrowIcon/>} label="Start task" color="success" onClick={onClickRun}/>}
                     {status == "running" && <Chip icon={<StopCircleIcon/>} label="Stop task" color="error" onClick={onClickStop}/>}
-                    {(status == "completed" || status == "error") && <Chip icon={<BuildIcon/>} label="Rework task" color="info" onClick={onClickStop}/>}
+                    {(status == "completed" || status == "error") && <Chip icon={<BuildIcon/>} label="Rework task" color="info" onClick={onClickRework}/>}
                 </Box>
                 <Divider/>
+                {(status == "completed" || status == "error") && (
+                    <>
+                        <Typography variant="h6">Result: {result}</Typography>
+                        <Divider/>
+                    </>
+                )}
                 <Box sx={{display: 'flex', alignItems: 'center', gap: 3, marginTop: 2}}>
                     <TextField value={status} sx={{width: '120px'}} label="Status"/>
                     <FormControl sx={{width: '200px'}}>
@@ -217,9 +227,6 @@ export default function Task({}) {
                         disabled={!editable}
                     />
                 </Box>}
-                <Divider/>
-                <Typography>Result: {result}</Typography>
-                <Divider/>
             </Box>
         </Grid>
     </Grid>
