@@ -40,23 +40,56 @@ export default function Home({}) {
         const edges = []
 
         const n = randomIntFromInterval(20, 100);
-        const m = randomIntFromInterval(1.5*n, 2.5*n);
+        let m = randomIntFromInterval(1,5*n, 2*n);//m is only an upper bound its very likely that the number of edges is significant smaller than m
 
         for(let i = 0; i < n; i++) {
             nodes.push({id: i, label: i});
         }
 
+        const degree = new Array(n).fill(0);
+
+        //ensure connectivity
+        for(let node = 1; node < n; node++) {
+            
+            let node2;
+
+            //search node2
+            do {
+                node2 = randomIntFromInterval(0, node-1);
+            }while(degree[node2] >= 3)
+
+            console.log(node, node2)
+
+            degree[node] = degree[node] + 1;
+            degree[node2] = degree[node2] + 1
+
+            edges.push({from: node, to: node2})
+        }
+
+        m = m - (n-1)
+
         for(let i = 0; i < m; i++) {
+
             const v1 = randomIntFromInterval(0, n-1);
             const v2 = randomIntFromInterval(0, n-1);
 
-            if(v1 == v2) {
-                i--;
+            console.log(degree[v1], degree[v2])
+
+            //when the edge pairs does not match the conditions we skip this edge thus leading to less than m edges (its for performance reasons)
+            if(degree[v1] >= 3 || degree[v2] >= 3) {
                 continue;
             }
 
+            if(v1 == v2) {
+                continue;
+            }
+
+            degree[v1] = degree[v1] + 1;
+            degree[v2] = degree[v2] + 1;
+
             edges.push({from: v1, to: v2})
         }
+        
 
         setGraph({nodes, edges})
         setGraphKey(uuid())
