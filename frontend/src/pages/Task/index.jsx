@@ -12,7 +12,7 @@ import StopCircleIcon from '@mui/icons-material/StopCircle';
 import BuildIcon from '@mui/icons-material/Build';
 import axios from "axios";
 import staticData from "../../assets/staticData.js";
-const apiUrl = import.meta.env.VITE_API_URL;
+const apiUrl = window.location.hostname + ":3000";
 
 export default function Task({}) {
 
