@@ -7,6 +7,9 @@ import path from 'path';
 import cors from 'cors'
 import dotenv from 'dotenv';
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 dotenv.config();  // Load environment variables from the .env file
 
 const cProgramPath = process.env.PROGRAM_PATH || "/default/path";
@@ -63,7 +66,7 @@ app.post('/createTask', (req, res) => {
     const type = data.type;
     console.log("type: " + type);
 
-    const taskFolder = "./tasks/task_" + taskId
+    const taskFolder = path.join(__dirname, 'tasks', `task_${taskId}`);
 
     if (existsSync(taskFolder)) {
         rmSync(taskFolder, { recursive: true, force: true });
