@@ -69,7 +69,7 @@ app.post('/createTask', (req, res) => {
         rmSync(taskFolder, { recursive: true, force: true });
     }
 
-    mkdirSync(taskFolder);
+    mkdirSync(taskFolder, { recursive: true });
 
     let params = [];
 
